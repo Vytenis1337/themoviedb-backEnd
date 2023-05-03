@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import userRoute from './routes/user.route.js';
 import authRoute from './routes/auth.route.js';
 import movieRoute from './routes/movie.route.js';
+import rootRoute from './routes/root.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { corsOptions } from './config/corsOptions.js';
@@ -34,9 +35,21 @@ const __dirname = path.dirname(__filename);
 console.log('directory-name 👉️', __dirname);
 app.use('/', express.static(path.join(__dirname, 'public')));
 
+app.use('/', rootRoute);
 app.use('/api/users', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/movies', movieRoute);
+
+app.all('*', (req, res) => {
+  res.status(404);
+  if (req.accepts('html')) {
+    res.sendFile(path.join(__dirname, 'views', '404.html'));
+  } else if (req.accepts('json')) {
+    res.json({ message: '404 Not Found' });
+  } else {
+    res.type('txt').send('404 Not Found');
+  }
+});
 
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
