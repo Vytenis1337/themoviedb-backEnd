@@ -10,7 +10,6 @@ const movieSchema = new Schema(
     id: {
       type: String,
       required: true,
-      unique: true,
     },
 
     overview: {
